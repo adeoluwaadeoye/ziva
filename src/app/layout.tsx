@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -24,12 +24,25 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ziva.ng";
+const siteUrl  = process.env.NEXT_PUBLIC_SITE_URL ?? "https://zivaclothings.vercel.app";
+const siteName = "ZIVA";
 const siteDescription =
-  "Shop premium Nigerian attire — Ankara, Aso-Oke, Agbada, Kaftan and more. Designed in Lagos, crafted by master artisans, worn worldwide.";
+  "Shop premium Nigerian attire — Ankara, Aso-Oke, Agbada, Kaftan, Adire and more. Designed in Lagos, crafted by master artisans, delivered worldwide.";
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)",  color: "#0f0f0f" },
+  ],
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: siteName,
 
   title: {
     default: "ZIVA | Premium Nigerian Fashion",
@@ -37,20 +50,31 @@ export const metadata: Metadata = {
   },
   description: siteDescription,
   keywords: [
-    "Nigerian fashion", "Ankara", "Aso-Oke", "Agbada", "Kaftan", "Adire",
-    "African attire", "Nigerian clothing", "Lagos fashion", "Senator suit",
-    "traditional Nigerian wear", "premium African fashion", "buy Nigerian clothes",
+    "Nigerian fashion", "Nigerian clothing", "buy Nigerian clothes online",
+    "Ankara fabric", "Ankara dress", "Aso-Oke gown", "Agbada", "Kaftan",
+    "Adire dress", "Senator suit", "Dashiki", "Cord lace", "native attire",
+    "African fashion", "African attire", "African wear",
+    "Lagos fashion", "Made in Nigeria", "Nigerian designer brand",
+    "traditional Nigerian wear", "premium African fashion",
+    "women's Nigerian fashion", "men's Nigerian fashion",
+    "ZIVA fashion", "ZIVA clothing", "handcrafted Nigerian clothing",
+    "Nigerian artisan fashion", "Balogun market", "Iseyin Aso-Oke",
   ],
-  authors: [{ name: "ZIVA", url: siteUrl }],
-  creator: "ZIVA",
-  publisher: "ZIVA",
-  category: "fashion",
+  authors:   [{ name: siteName, url: siteUrl }],
+  creator:   siteName,
+  publisher: siteName,
+  category:  "fashion",
+  referrer:  "origin-when-cross-origin",
+
+  alternates: {
+    canonical: "/",
+  },
 
   robots: {
-    index: true,
+    index:  true,
     follow: true,
     googleBot: {
-      index: true,
+      index:  true,
       follow: true,
       "max-video-preview": -1,
       "max-image-preview": "large",
@@ -59,34 +83,116 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: [{ url: "/assets/icon.png", type: "image/png" }],
+    icon: [
+      { url: "/assets/icon.png", type: "image/png", sizes: "any" },
+    ],
     shortcut: "/assets/icon.png",
-    apple: [{ url: "/assets/icon.png", sizes: "180x180", type: "image/png" }],
+    apple:    [{ url: "/assets/icon.png", sizes: "180x180", type: "image/png" }],
   },
 
+  manifest: "/manifest.json",
+
   openGraph: {
-    type: "website",
-    siteName: "ZIVA",
-    locale: "en_NG",
-    url: siteUrl,
-    title: "ZIVA | Premium Nigerian Fashion",
+    type:        "website",
+    siteName,
+    locale:      "en_NG",
+    url:         siteUrl,
+    title:       "ZIVA | Premium Nigerian Fashion",
     description: siteDescription,
     images: [
       {
-        url: "/assets/aso-oke-W4.jpg",
-        width: 1200,
+        url:    "/bg.jpg",
+        width:  1200,
         height: 630,
-        alt: "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
+        alt:    "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
+        type:   "image/jpeg",
+      },
+      {
+        url:    "/assets/aso-oke-W4.jpg",
+        width:  900,
+        height: 900,
+        alt:    "ZIVA Aso-Oke Collection — handwoven in Iseyin",
+        type:   "image/jpeg",
       },
     ],
   },
 
   twitter: {
-    card: "summary_large_image",
-    title: "ZIVA | Premium Nigerian Fashion",
+    card:        "summary_large_image",
+    title:       "ZIVA | Premium Nigerian Fashion",
     description: siteDescription,
-    images: ["/assets/aso-oke-W4.jpg"],
+    images: [
+      {
+        url: "/bg.jpg",
+        alt: "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
+      },
+    ],
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id":   `${siteUrl}/#organization`,
+      name:    siteName,
+      url:     siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url:     `${siteUrl}/assets/icon.png`,
+        width:   512,
+        height:  512,
+      },
+      description:    siteDescription,
+      foundingDate:   "2019",
+      foundingLocation: {
+        "@type": "Place",
+        name:    "Lagos, Nigeria",
+      },
+      address: {
+        "@type":           "PostalAddress",
+        streetAddress:     "15 Bode Thomas Street, Surulere",
+        addressLocality:   "Lagos",
+        addressCountry:    "NG",
+      },
+      contactPoint: {
+        "@type":       "ContactPoint",
+        telephone:     "+234-801-234-5678",
+        contactType:   "customer service",
+        email:         "hello@ziva.ng",
+        availableLanguage: "English",
+      },
+    },
+    {
+      "@type":       "WebSite",
+      "@id":         `${siteUrl}/#website`,
+      url:           siteUrl,
+      name:          siteName,
+      description:   siteDescription,
+      inLanguage:    "en-NG",
+      publisher:     { "@id": `${siteUrl}/#organization` },
+      potentialAction: {
+        "@type":  "SearchAction",
+        target: {
+          "@type":       "EntryPoint",
+          urlTemplate:   `${siteUrl}/products?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type":              "OnlineStore",
+      "@id":                `${siteUrl}/#store`,
+      name:                 siteName,
+      url:                  siteUrl,
+      currenciesAccepted:   "NGN",
+      paymentAccepted:      "Credit Card, Debit Card",
+      priceRange:           "₦₦₦",
+      areaServed:           { "@type": "Country", name: "Nigeria" },
+      hasMap:               "https://maps.google.com/?q=15+Bode+Thomas+Street+Surulere+Lagos",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -94,10 +200,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
-      data-scroll-behavior="smooth"
+      lang="en-NG"
       className={`${cormorant.variable} ${dmSans.variable}`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col antialiased">
         <Header />
         <main className="flex-1 pt-26 lg:pt-34">{children}</main>

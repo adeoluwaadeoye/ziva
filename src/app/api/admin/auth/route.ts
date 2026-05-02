@@ -10,8 +10,9 @@ function makeToken(secret: string) {
 const COOKIE_OPTS = {
   httpOnly: true,
   sameSite: "strict" as const,
+  secure:   process.env.NODE_ENV === "production",
   path:     "/",
-  maxAge:   60 * 60 * 24, // 24 hours
+  maxAge:   60 * 60 * 24,
 };
 
 export async function POST(req: NextRequest) {
