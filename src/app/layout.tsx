@@ -107,13 +107,6 @@ export const metadata: Metadata = {
         alt:    "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
         type:   "image/jpeg",
       },
-      {
-        url:    "/assets/aso-oke-W4.jpg",
-        width:  900,
-        height: 900,
-        alt:    "ZIVA Aso-Oke Collection — handwoven in Iseyin",
-        type:   "image/jpeg",
-      },
     ],
   },
 
