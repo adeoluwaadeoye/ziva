@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+/* ── Brand tokens ── */
+:root {
+  --ziva-black:  #1C1C1C;
+  --ziva-gold:   #1C1C1C;
+  --ziva-gold-lt:#444444;
+  --ziva-cream:  #FAFAF8;
+  --ziva-muted:  #6B6B6B;
+  --ziva-border: #E8E4DF;
+  --ziva-white:  #FFFFFF;
+}
+
+/* ── Tailwind theme ── */
+@theme inline {
+  --color-ziva-black:   var(--ziva-black);
+  --color-ziva-gold:    var(--ziva-gold);
+  --color-ziva-gold-lt: var(--ziva-gold-lt);
+  --color-ziva-cream:   var(--ziva-cream);
+  --color-ziva-muted:   var(--ziva-muted);
+  --color-ziva-border:  var(--ziva-border);
+  --color-ziva-white:   var(--ziva-white);
+
+  --font-heading: var(--font-playfair);
+  --font-body:    var(--font-dm-sans);
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--ziva-cream);
+  color: var(--ziva-black);
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--ziva-border); }
+::-webkit-scrollbar-thumb { background: var(--ziva-black); border-radius: 3px; }
+
+/* ── Layout utilities ── */
+.container-ziva {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 640px)  { .container-ziva { padding-inline: 2rem; } }
+@media (min-width: 1024px) { .container-ziva { padding-inline: 3rem; } }
+
+/* ── Button utilities ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--ziva-black);
+  color: var(--ziva-cream);
+  padding: 0.75rem 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--ziva-black);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.btn-primary:hover {
+  background-color: #444444;
+  border-color: #444444;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--ziva-black);
+  padding: 0.75rem 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--ziva-black);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.btn-outline:hover {
+  background-color: var(--ziva-black);
+  color: var(--ziva-cream);
+}
+
+.gold-line {
+  display: block;
+  width: 3rem;
+  height: 2px;
+  background-color: var(--ziva-black);
+}
+
+/* ── Animations ── */
+@keyframes heroProgress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeSlideIn {
+  animation: fadeSlideIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animation-delay-150 { animation-delay: 150ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes cartBounce {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.45); }
+  55%  { transform: scale(0.88); }
+  75%  { transform: scale(1.18); }
+  90%  { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(28,28,28,0.45); }
+  60%       { box-shadow: 0 0 0 10px rgba(28,28,28,0); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(110%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(110%); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes scrollDrop {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(400%); opacity: 0; }
+}
+.animate-scroll-drop { animation: scrollDrop 1.8s ease-in-out infinite; }
+
+.animate-fade-in-up   { animation: fadeInUp   0.65s cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-fade-in-down { animation: fadeInDown  0.55s cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-fade-in-left { animation: fadeInLeft  0.6s  cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-fade-in-right{ animation: fadeInRight 0.6s  cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-scale-in     { animation: scaleIn     0.4s  cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-slide-down   { animation: slideDown   0.3s  cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-toast-in     { animation: toastIn     0.4s  cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-toast-out    { animation: toastOut    0.35s cubic-bezier(.55,0,1,.45)   forwards; }
+.animate-cart-bounce  { animation: cartBounce  0.55s cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-pulse-gold   { animation: pulseGold   1.2s  ease-out; }
+.animate-spin-slow    { animation: spin        1.2s  linear infinite; }
+
+/* Stagger delays */
+.delay-100 { animation-delay: 0.10s; }
+.delay-200 { animation-delay: 0.20s; }
+.delay-300 { animation-delay: 0.30s; }
+.delay-400 { animation-delay: 0.40s; }
+.delay-500 { animation-delay: 0.50s; }
+.delay-600 { animation-delay: 0.60s; }
+.delay-700 { animation-delay: 0.70s; }
+
+/* Shimmer skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--ziva-border) 25%, #f0ece7 50%, var(--ziva-border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+/* Intersection observer trigger */
+.reveal { opacity: 0; }
+.reveal.revealed { animation: fadeInUp 0.7s cubic-bezier(.22,.68,0,1.2) forwards; }
+
+/* ── Standard CTA — equal dimensions across all pages ── */
+.cta-btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             0.5rem;
+  min-width:       130px;
+  height:          44px;
+  padding:         0 1.25rem;
+  font-size:       0.6875rem;
+  font-weight:     600;
+  letter-spacing:  0.14em;
+  text-transform:  uppercase;
+  cursor:          pointer;
+  transition:      all 0.25s ease;
+  white-space:     nowrap;
+}
+@media (min-width: 640px) {
+  .cta-btn { min-width: 160px; height: 48px; padding: 0 1.75rem; }
+}
+
+/* Ghost variant — bordered */
+.cta-btn-ghost {
+  background-color: transparent;
+  color:            #ffffff;
+  border:           1px solid rgba(255,255,255,0.28);
+}
+.cta-btn-ghost:hover {
+  background-color: rgba(255,255,255,0.10);
+  border-color:     rgba(255,255,255,0.55);
+}
+
+/* Subtle variant — no border */
+.cta-btn-subtle {
+  background-color: rgba(255,255,255,0.10);
+  color:            #ffffff;
+  border:           none;
+}
+.cta-btn-subtle:hover {
+  background-color: rgba(255,255,255,0.20);
+}
+
+/* ── Hero bg image — focal point shifts right on narrow viewports so the
+   model/subject (at the far right of the image) stays visible on mobile     ── */
+.hero-img-pos { object-position: 72% top; }
+@media (min-width: 768px)  { .hero-img-pos { object-position: 62% top; } }
+@media (min-width: 1024px) { .hero-img-pos { object-position: center top; } }
+
+/* ── Landscape phone adjustments — tighten vertical spacing so content fits
+   in the short 100svh without overflow                                       ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-landscape-compact { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+}
+
+/* ── Hero slide entrance animations ── */
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(52px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-52px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-from-right { animation: slideFromRight 0.65s cubic-bezier(.22,.68,0,1.2) forwards; }
+.animate-slide-from-left  { animation: slideFromLeft  0.65s cubic-bezier(.22,.68,0,1.2) forwards; }
