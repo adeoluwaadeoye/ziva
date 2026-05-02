@@ -112,13 +112,13 @@ export const metadata: Metadata = {
   // ── ICONS ───────────────────────────────────────────────────────────────────
   icons: {
     icon: [
-      { url: "/assets/icon.png", sizes: "any" },
-      { url: "/assets/icon.png", sizes: "16x16",  type: "image/png" },
-      { url: "/assets/icon.png", sizes: "32x32",  type: "image/png" },
-      { url: "/assets/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/assets/icon.jpg", sizes: "any" },
+      { url: "/assets/icon.jpg", sizes: "16x16",  type: "image/png" },
+      { url: "/assets/icon.jpg", sizes: "32x32",  type: "image/png" },
+      { url: "/assets/icon.jpg", sizes: "192x192", type: "image/png" },
     ],
-    apple:    [{ url: "/assets/icon.png", sizes: "180x180" }],
-    shortcut: "/assets/icon.png",
+    apple:    [{ url: "/assets/icon.jpg", sizes: "180x180" }],
+    shortcut: "/assets/icon.jpg",
   },
 
   // ── MANIFEST ────────────────────────────────────────────────────────────────
@@ -135,7 +135,7 @@ const jsonLd = {
       url: siteUrl,
       logo: {
         "@type": "ImageObject",
-        url: `${siteUrl}/assets/icon.png`,
+        url: `${siteUrl}/assets/icon.jpg`,
         width: 512,
         height: 512,
       },
