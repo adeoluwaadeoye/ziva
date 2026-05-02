@@ -96,19 +96,19 @@ export const metadata: Metadata = {
     type:        "website",
     siteName,
     locale:      "en_NG",
-    url:         siteUrl,
+    url:         "https://zivaclothings.vercel.app",
     title:       "ZIVA | Premium Nigerian Fashion",
     description: siteDescription,
     images: [
       {
-        url:    "/assets/aso-oke-W4.jpg",
+        url:    "https://zivaclothings.vercel.app/assets/aso-oke-W4.jpg",
         width:  1200,
         height: 630,
         alt:    "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
         type:   "image/jpeg",
       },
       {
-        url:    "/assets/ankara-W2.jpg",
+        url:    "https://zivaclothings.vercel.app/assets/ankara-W2.jpg",
         width:  600,
         height: 600,
         alt:    "ZIVA Ankara Collection",
@@ -123,7 +123,7 @@ export const metadata: Metadata = {
     description: siteDescription,
     images: [
       {
-        url: "/assets/aso-oke-W4.jpg",
+        url: "https://zivaclothings.vercel.app/assets/aso-oke-W4.jpg",
         alt: "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
       },
     ],
