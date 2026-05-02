@@ -24,7 +24,7 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const siteUrl  = process.env.NEXT_PUBLIC_SITE_URL ?? "https://zivaclothings.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://zivaclothings.vercel.app";
 const siteName = "ZIVA";
 const siteDescription =
   "Shop premium Nigerian attire — Ankara, Aso-Oke, Agbada, Kaftan, Adire and more. Designed in Lagos, crafted by master artisans, delivered worldwide.";
@@ -32,7 +32,7 @@ const siteDescription =
 export const viewport: Viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)",  color: "#0f0f0f" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f0f0f" },
   ],
   colorScheme: "light",
   width: "device-width",
@@ -60,21 +60,21 @@ export const metadata: Metadata = {
     "ZIVA fashion", "ZIVA clothing", "handcrafted Nigerian clothing",
     "Nigerian artisan fashion", "Balogun market", "Iseyin Aso-Oke",
   ],
-  authors:   [{ name: siteName, url: siteUrl }],
-  creator:   siteName,
+  authors: [{ name: siteName, url: siteUrl }],
+  creator: siteName,
   publisher: siteName,
-  category:  "fashion",
-  referrer:  "origin-when-cross-origin",
+  category: "fashion",
+  referrer: "origin-when-cross-origin",
 
   alternates: {
     canonical: "/",
   },
 
   robots: {
-    index:  true,
+    index: true,
     follow: true,
     googleBot: {
-      index:  true,
+      index: true,
       follow: true,
       "max-video-preview": -1,
       "max-image-preview": "large",
@@ -87,36 +87,36 @@ export const metadata: Metadata = {
       { url: "/assets/icon.png", type: "image/png", sizes: "any" },
     ],
     shortcut: "/assets/icon.png",
-    apple:    [{ url: "/assets/icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/assets/icon.png", sizes: "180x180", type: "image/png" }],
   },
 
   manifest: "/manifest.json",
 
   openGraph: {
-    type:        "website",
+    type: "website",
     siteName,
-    locale:      "en_NG",
-    url:         "https://zivaclothings.vercel.app",
-    title:       "ZIVA | Premium Nigerian Fashion",
+    locale: "en_NG",
+    url: "https://zivaclothings.vercel.app",
+    title: "ZIVA | Premium Nigerian Fashion",
     description: siteDescription,
     images: [
       {
-        url:    "https://zivaclothings.vercel.app/assets/ankara-W2.jpg",
-        width:  1200,
+        url: "https://zivaclothings.vercel.app/assets/card.jpg",
+        width: 1200,
         height: 630,
-        alt:    "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
-        type:   "image/jpeg",
+        alt: "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
+        type: "image/jpeg",
       },
     ],
   },
 
   twitter: {
-    card:        "summary_large_image",
-    title:       "ZIVA | Premium Nigerian Fashion",
+    card: "summary_large_image",
+    title: "ZIVA | Premium Nigerian Fashion",
     description: siteDescription,
     images: [
       {
-        url: "https://zivaclothings.vercel.app/assets/ankara-W2.jpg",
+        url: "https://zivaclothings.vercel.app/assets/card.jpg",
         alt: "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
       },
     ],
@@ -128,62 +128,62 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id":   `${siteUrl}/#organization`,
-      name:    siteName,
-      url:     siteUrl,
+      "@id": `${siteUrl}/#organization`,
+      name: siteName,
+      url: siteUrl,
       logo: {
         "@type": "ImageObject",
-        url:     `${siteUrl}/assets/icon.png`,
-        width:   512,
-        height:  512,
+        url: `${siteUrl}/assets/icon.png`,
+        width: 512,
+        height: 512,
       },
-      description:    siteDescription,
-      foundingDate:   "2019",
+      description: siteDescription,
+      foundingDate: "2019",
       foundingLocation: {
         "@type": "Place",
-        name:    "Lagos, Nigeria",
+        name: "Lagos, Nigeria",
       },
       address: {
-        "@type":           "PostalAddress",
-        streetAddress:     "15 Bode Thomas Street, Surulere",
-        addressLocality:   "Lagos",
-        addressCountry:    "NG",
+        "@type": "PostalAddress",
+        streetAddress: "15 Bode Thomas Street, Surulere",
+        addressLocality: "Lagos",
+        addressCountry: "NG",
       },
       contactPoint: {
-        "@type":       "ContactPoint",
-        telephone:     "+234-801-234-5678",
-        contactType:   "customer service",
-        email:         "hello@ziva.ng",
+        "@type": "ContactPoint",
+        telephone: "+234-801-234-5678",
+        contactType: "customer service",
+        email: "hello@ziva.ng",
         availableLanguage: "English",
       },
     },
     {
-      "@type":       "WebSite",
-      "@id":         `${siteUrl}/#website`,
-      url:           siteUrl,
-      name:          siteName,
-      description:   siteDescription,
-      inLanguage:    "en-NG",
-      publisher:     { "@id": `${siteUrl}/#organization` },
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: siteName,
+      description: siteDescription,
+      inLanguage: "en-NG",
+      publisher: { "@id": `${siteUrl}/#organization` },
       potentialAction: {
-        "@type":  "SearchAction",
+        "@type": "SearchAction",
         target: {
-          "@type":       "EntryPoint",
-          urlTemplate:   `${siteUrl}/products?q={search_term_string}`,
+          "@type": "EntryPoint",
+          urlTemplate: `${siteUrl}/products?q={search_term_string}`,
         },
         "query-input": "required name=search_term_string",
       },
     },
     {
-      "@type":              "OnlineStore",
-      "@id":                `${siteUrl}/#store`,
-      name:                 siteName,
-      url:                  siteUrl,
-      currenciesAccepted:   "NGN",
-      paymentAccepted:      "Credit Card, Debit Card",
-      priceRange:           "₦₦₦",
-      areaServed:           { "@type": "Country", name: "Nigeria" },
-      hasMap:               "https://maps.google.com/?q=15+Bode+Thomas+Street+Surulere+Lagos",
+      "@type": "OnlineStore",
+      "@id": `${siteUrl}/#store`,
+      name: siteName,
+      url: siteUrl,
+      currenciesAccepted: "NGN",
+      paymentAccepted: "Credit Card, Debit Card",
+      priceRange: "₦₦₦",
+      areaServed: { "@type": "Country", name: "Nigeria" },
+      hasMap: "https://maps.google.com/?q=15+Bode+Thomas+Street+Surulere+Lagos",
     },
   ],
 };

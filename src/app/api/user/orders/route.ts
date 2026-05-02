@@ -65,28 +65,31 @@ export async function POST(req: NextRequest) {
 
     await db.collection("orders").insertOne(order);
 
-    /* Send emails — fire-and-forget so a Resend failure never blocks the response */
-    const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+    const siteUrl    = process.env.NEXT_PUBLIC_SITE_URL ?? "";
     const adminEmail = process.env.ADMIN_EMAIL;
     const fromAddr   = process.env.RESEND_FROM ?? "ZIVA <onboarding@resend.dev>";
     const emailData  = { orderId: order.id, reference, customer, delivery, items, subtotal, shipping, total };
 
-    Promise.all([
-      resend.emails.send({
-        from:    fromAddr,
-        to:      customer.email,
-        subject: `Order Confirmed — #${order.id} | ZIVA`,
-        html:    orderConfirmationHtml(emailData),
-      }),
-      adminEmail
-        ? resend.emails.send({
-            from:    fromAddr,
-            to:      adminEmail,
-            subject: `New Order #${order.id} — ${customer.name} — ₦${total.toLocaleString("en-NG")}`,
-            html:    newOrderAlertHtml(emailData, siteUrl),
-          })
-        : Promise.resolve(),
-    ]).catch((err) => console.error("[orders email]", err));
+    try {
+      await Promise.all([
+        resend.emails.send({
+          from:    fromAddr,
+          to:      customer.email,
+          subject: `Order Confirmed — #${order.id} | ZIVA`,
+          html:    orderConfirmationHtml(emailData),
+        }),
+        adminEmail
+          ? resend.emails.send({
+              from:    fromAddr,
+              to:      adminEmail,
+              subject: `New Order #${order.id} — ${customer.name} — ₦${total.toLocaleString("en-NG")}`,
+              html:    newOrderAlertHtml(emailData, siteUrl),
+            })
+          : Promise.resolve(),
+      ]);
+    } catch (err) {
+      console.error("[orders email]", err);
+    }
 
     return NextResponse.json({ order });
   } catch (err) {
