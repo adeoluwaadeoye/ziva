@@ -24,7 +24,7 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://zivaclothings.vercel.app";
+const siteUrl = "https://zivaclothings.vercel.app";
 const siteName = "ZIVA";
 const siteDescription =
   "Shop premium Nigerian attire — Ankara, Aso-Oke, Agbada, Kaftan, Adire and more. Designed in Lagos, crafted by master artisans, delivered worldwide.";
@@ -82,45 +82,47 @@ export const metadata: Metadata = {
     },
   },
 
+  // ── OPEN GRAPH ─────────────────────────────────────────────────────────────
+  openGraph: {
+    type:        "website",
+    locale:      "en_NG",
+    url:         siteUrl,
+    siteName,
+    title:       "ZIVA | Premium Nigerian Fashion",
+    description: siteDescription,
+    images: [
+      {
+        url:    "/card.jpg",
+        width:  1200,
+        height: 630,
+        alt:    "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
+      },
+    ],
+  },
+
+  // ── TWITTER CARD ────────────────────────────────────────────────────────────
+  twitter: {
+    card:        "summary_large_image",
+    title:       "ZIVA | Premium Nigerian Fashion",
+    description: siteDescription,
+    images:      ["/card.jpg"],
+    creator:     "@AdeDadB",
+  },
+
+  // ── ICONS ───────────────────────────────────────────────────────────────────
   icons: {
     icon: [
-      { url: "/assets/icon.png", type: "image/png", sizes: "any" },
+      { url: "/assets/icon.png", sizes: "any" },
+      { url: "/assets/icon.png", sizes: "16x16",  type: "image/png" },
+      { url: "/assets/icon.png", sizes: "32x32",  type: "image/png" },
+      { url: "/assets/icon.png", sizes: "192x192", type: "image/png" },
     ],
+    apple:    [{ url: "/assets/icon.png", sizes: "180x180" }],
     shortcut: "/assets/icon.png",
-    apple: [{ url: "/assets/icon.png", sizes: "180x180", type: "image/png" }],
   },
 
+  // ── MANIFEST ────────────────────────────────────────────────────────────────
   manifest: "/manifest.json",
-
-  openGraph: {
-    type: "website",
-    siteName,
-    locale: "en_NG",
-    url: "https://zivaclothings.vercel.app",
-    title: "ZIVA | Premium Nigerian Fashion",
-    description: siteDescription,
-    images: [
-      {
-        url: "https://zivaclothings.vercel.app/assets/card.jpg",
-        width: 1200,
-        height: 630,
-        alt: "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
-        type: "image/jpeg",
-      },
-    ],
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title: "ZIVA | Premium Nigerian Fashion",
-    description: siteDescription,
-    images: [
-      {
-        url: "https://zivaclothings.vercel.app/assets/card.jpg",
-        alt: "ZIVA — Premium Nigerian Fashion, crafted in Lagos",
-      },
-    ],
-  },
 };
 
 const jsonLd = {
