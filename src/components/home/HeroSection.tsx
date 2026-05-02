@@ -31,7 +31,7 @@ const slides = [
     heading: "ZIVA",
     italic: "",
     sub: "Premium Ankara, Aso-Oke, Agbada & beyond — crafted for the modern Nigerian.",
-    cta: { label: "Shop Collection", href: "/products" },
+    cta: { label: "Shop Now", href: "/products" },
     accent: "#C9A84C",
   },
   {

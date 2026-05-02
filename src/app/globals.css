@@ -28,7 +28,10 @@
 /* ── Base ── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden; /* prevents layout-level horizontal overflow */
+}
 
 body {
   background-color: var(--ziva-cream);
@@ -37,7 +40,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  min-width: 320px; /* never collapse below smallest supported phone */
 }
+
+img, video, svg { max-width: 100%; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
@@ -267,6 +273,13 @@ h1, h2, h3, h4, h5, h6 {
    in the short 100svh without overflow                                       ── */
 @media (max-height: 500px) and (orientation: landscape) {
   .hero-landscape-compact { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+
+  /* Story section image — cap height so it doesn't overflow the short viewport */
+  .story-img-landscape { height: 70svh; }
+
+  /* Footer — reduce section padding so it scrolls comfortably on short screens */
+  .footer-nl-band  { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+  .footer-main-grid { padding-top: 2rem;  padding-bottom: 2rem;   }
 }
 
 /* ── Hero slide entrance animations ── */

@@ -72,12 +72,12 @@ export default function BrandStory() {
         </div>
 
         {/* ── Image — RIGHT on desktop, SECOND on mobile ── */}
-        <div className="relative h-[75vw] sm:h-[55vw] lg:h-auto lg:min-h-175">
+        <div className="story-img-landscape relative h-[75vw] sm:h-[55vw] lg:h-auto lg:min-h-175">
           <Image
             src="/assets/story-bg.jpg"
             alt="Nigerian master tailor at work"
             fill
-            className="object-cover object-center"
+            className="object-cover object-top"
             sizes="(max-width: 1024px) 100vw, 50vw"
           />
           {/* Overlays */}

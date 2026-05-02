@@ -139,8 +139,8 @@ export default function Footer() {
 
       {/* ── Newsletter band ── */}
       <div className="border-b border-white/[0.07]">
-        <div className="container-ziva py-10 sm:py-12 lg:py-16">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 sm:gap-10 lg:gap-16">
+        <div className="footer-nl-band container-ziva py-8 sm:py-12 lg:py-16">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:gap-10 lg:gap-16">
 
             <div className="max-w-md shrink-0">
               <div className="flex items-center gap-3 mb-4">
@@ -165,8 +165,8 @@ export default function Footer() {
       </div>
 
       {/* ── Main grid ── */}
-      <div className="container-ziva py-12 lg:py-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-[1.6fr_1fr_1fr_1fr] gap-8 lg:gap-8">
+      <div className="footer-main-grid container-ziva py-10 sm:py-12 lg:py-20">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-[1.6fr_1fr_1fr_1fr] gap-x-6 gap-y-10 sm:gap-8 lg:gap-8">
 
           {/* Brand column — full width on mobile, 1 col on md+ */}
           <div className="col-span-2 md:col-span-1">
@@ -230,7 +230,7 @@ export default function Footer() {
           </div>
 
           {/* Company */}
-          <div>
+          <div className="col-span-2 sm:col-span-1 md:col-span-1">
             <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-white/50 mb-5">
               Company
             </p>
@@ -249,7 +249,7 @@ export default function Footer() {
 
       {/* ── Bottom bar ── */}
       <div className="container-ziva py-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 flex-wrap">
 
           {/* Left: copyright + legal */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-5">
