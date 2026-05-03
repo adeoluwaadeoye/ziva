@@ -98,11 +98,15 @@ export default function Header() {
 
   useEffect(() => {
     if (!cartOpen) return;
-    const h = (e: MouseEvent) => {
+    const h = (e: Event) => {
       if (cartRef.current && !cartRef.current.contains(e.target as Node)) setCartOpen(false);
     };
     document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
+    document.addEventListener("touchstart", h, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", h);
+      document.removeEventListener("touchstart", h);
+    };
   }, [cartOpen]);
 
   /* Close desktop suggestion dropdown on outside click */

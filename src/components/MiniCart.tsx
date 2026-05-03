@@ -19,10 +19,17 @@ export default function MiniCart({ onClose }: Props) {
   const totalItems = useCartStore((s) => s.totalItems());
 
   return (
-    <div
-      ref={ref}
-      className="absolute top-full right-0 mt-2 w-80 sm:w-96 bg-white border border-ziva-border shadow-2xl z-100 flex flex-col max-h-[80vh] animate-slide-down"
-    >
+    <>
+      {/* Backdrop — mobile/tablet only, closes cart on outside tap */}
+      <div
+        className="lg:hidden fixed inset-0 bg-black/30 z-249"
+        onClick={onClose}
+      />
+
+      <div
+        ref={ref}
+        className="fixed top-18 left-3 right-3 z-250 lg:absolute lg:top-full lg:left-auto lg:right-0 lg:mt-2 lg:w-96 lg:z-100 bg-white border border-ziva-border shadow-2xl flex flex-col max-h-[80vh] animate-slide-down"
+      >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-ziva-border shrink-0">
         <div className="flex items-center gap-2">
@@ -162,5 +169,6 @@ export default function MiniCart({ onClose }: Props) {
         </div>
       )}
     </div>
+    </>
   );
 }
