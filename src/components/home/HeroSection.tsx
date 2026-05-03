@@ -105,7 +105,7 @@ export default function HeroSection() {
               quality={100}
               {...(i > 0 && { loading: "eager" as const })}
               className="object-cover hero-img-pos"
-              sizes="100vw"
+              sizes="(max-width: 768px) 300vw, 100vw"
             />
           </div>
         ))}
