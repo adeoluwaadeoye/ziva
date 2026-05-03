@@ -98,15 +98,14 @@ export default function Header() {
 
   useEffect(() => {
     if (!cartOpen) return;
-    const h = (e: Event) => {
+    const h = (e: MouseEvent) => {
+      // Mobile/tablet uses a portal backdrop to close — skip the DOM-contains
+      // check there because portal content is not inside cartRef in the DOM.
+      if (window.innerWidth < 1024) return;
       if (cartRef.current && !cartRef.current.contains(e.target as Node)) setCartOpen(false);
     };
     document.addEventListener("mousedown", h);
-    document.addEventListener("touchstart", h, { passive: true });
-    return () => {
-      document.removeEventListener("mousedown", h);
-      document.removeEventListener("touchstart", h);
-    };
+    return () => document.removeEventListener("mousedown", h);
   }, [cartOpen]);
 
   /* Close desktop suggestion dropdown on outside click */

@@ -1,16 +1,21 @@
 "use client";
 
+import { createPortal } from "react-dom";
+import { useSyncExternalStore, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PiX, PiMinus, PiPlus, PiShoppingBag, PiTrash } from "react-icons/pi";
 import { useCartStore } from "@/lib/store";
 
-function fmt(n: number) { return "₦" + n.toLocaleString("en-NG"); }
+function fmt(n: number) {
+  return "₦" + n.toLocaleString("en-NG");
+}
 
-interface Props { onClose: () => void }
+interface Props {
+  onClose: () => void;
+}
 
-// Shared panel content — rendered for both mobile and desktop layouts
-function CartContent({ onClose }: { onClose: () => void }) {
+function CartPanel({ onClose }: { onClose: () => void }) {
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
@@ -29,18 +34,18 @@ function CartContent({ onClose }: { onClose: () => void }) {
         </div>
         <button
           onClick={onClose}
-          className="text-ziva-muted hover:text-ziva-black transition-colors"
+          className="p-1 text-ziva-muted hover:text-ziva-black transition-colors"
           aria-label="Close cart"
         >
-          <PiX size={16} />
+          <PiX size={18} />
         </button>
       </div>
 
-      {/* Items */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Items list */}
+      <div className="flex-1 overflow-y-auto overscroll-contain">
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center px-5">
-            <PiShoppingBag size={36} className="text-ziva-border mb-3" />
+          <div className="flex flex-col items-center justify-center py-16 text-center px-5">
+            <PiShoppingBag size={40} className="text-ziva-border mb-3" />
             <p className="text-sm text-ziva-muted">Your cart is empty</p>
             <Link
               href="/products"
@@ -53,7 +58,7 @@ function CartContent({ onClose }: { onClose: () => void }) {
         ) : (
           <ul className="divide-y divide-ziva-border">
             {items.map((item) => (
-              <li key={item.id} className="flex gap-3 px-4 py-3.5 hover:bg-ziva-cream/50 transition-colors">
+              <li key={item.id} className="flex gap-3 px-4 py-3.5">
                 <div className="relative w-16 h-20 shrink-0 overflow-hidden bg-ziva-border">
                   <Image
                     src={item.product.image}
@@ -68,7 +73,7 @@ function CartContent({ onClose }: { onClose: () => void }) {
                   <Link
                     href={`/products/${item.product.id}`}
                     onClick={onClose}
-                    className="text-xs font-medium text-ziva-black hover:text-black/70 transition-colors line-clamp-2 leading-snug"
+                    className="text-xs font-medium text-ziva-black line-clamp-2 leading-snug"
                   >
                     {item.product.name}
                   </Link>
@@ -87,17 +92,17 @@ function CartContent({ onClose }: { onClose: () => void }) {
                     <div className="flex items-center border border-ziva-border">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-6 h-6 flex items-center justify-center text-ziva-muted hover:text-ziva-black hover:bg-ziva-cream transition-colors"
+                        className="w-7 h-7 flex items-center justify-center text-ziva-muted hover:text-ziva-black transition-colors"
                         aria-label="Decrease quantity"
                       >
                         <PiMinus size={10} />
                       </button>
-                      <span className="w-7 text-center text-xs font-medium text-ziva-black">
+                      <span className="w-8 text-center text-xs font-medium text-ziva-black">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="w-6 h-6 flex items-center justify-center text-ziva-muted hover:text-ziva-black hover:bg-ziva-cream transition-colors"
+                        className="w-7 h-7 flex items-center justify-center text-ziva-muted hover:text-ziva-black transition-colors"
                         aria-label="Increase quantity"
                       >
                         <PiPlus size={10} />
@@ -110,10 +115,10 @@ function CartContent({ onClose }: { onClose: () => void }) {
                       </span>
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="text-ziva-muted hover:text-red-500 transition-colors"
+                        className="p-1 text-ziva-muted hover:text-red-500 transition-colors"
                         aria-label="Remove item"
                       >
-                        <PiTrash size={12} />
+                        <PiTrash size={13} />
                       </button>
                     </div>
                   </div>
@@ -159,35 +164,57 @@ function CartContent({ onClose }: { onClose: () => void }) {
 }
 
 export default function MiniCart({ onClose }: Props) {
-  const panelClass = "bg-white border border-ziva-border shadow-2xl flex flex-col max-h-[80vh] animate-slide-down";
+  // useSyncExternalStore returns false on SSR, true on client — no setState in effect
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
+  // Lock body scroll on mobile while cart is open; restore on unmount
+  useEffect(() => {
+    if (typeof window === "undefined" || window.innerWidth >= 1024) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   return (
     <>
-      {/* ── Mobile / tablet (< lg) ─────────────────────────────────────────
-          Outer div covers the full screen. Tapping OUTSIDE the white panel
-          fires onClose via the outer div's onClick.
-          The white panel calls stopPropagation so any tap inside it never
-          reaches the outer div — this is the standard fix for the iOS Safari
-          bug where fixed inset-0 siblings receive click events regardless of
-          z-index stacking. */}
-      <div
-        className="lg:hidden fixed inset-0 z-250"
-        onClick={onClose}
-      >
-        {/* dim overlay — pointer-events-none so taps pass through to outer div */}
-        <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-        {/* cart panel */}
-        <div
-          className={`absolute top-18 left-3 right-3 ${panelClass}`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <CartContent onClose={onClose} />
-        </div>
-      </div>
+      {/*
+       * MOBILE / TABLET (<lg)
+       * Portal renders at document.body — completely outside the <header z-50>
+       * stacking context. The mousedown listener in Header.tsx skips mobile
+       * (window.innerWidth < 1024) so it never fires setCartOpen(false) when
+       * the user taps anything inside this sheet.
+       *
+       * Backdrop: cursor-pointer required for iOS Safari to fire onClick on a div.
+       */}
+      {mounted &&
+        createPortal(
+          <div className="lg:hidden">
+            <div
+              className="fixed inset-0 z-200 bg-black/50 cursor-pointer"
+              onClick={onClose}
+              aria-hidden="true"
+            />
+            <div className="fixed top-0 left-0 right-0 z-201 bg-white rounded-b-2xl shadow-2xl flex flex-col max-h-[85vh] animate-slide-from-top">
+              <CartPanel onClose={onClose} />
+              <div className="flex justify-center pb-3 pt-1 shrink-0">
+                <div className="w-10 h-1 rounded-full bg-ziva-border" />
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
-      {/* ── Desktop (≥ lg): absolute dropdown ───────────────────────────── */}
-      <div className={`hidden lg:flex flex-col absolute top-full right-0 mt-2 w-96 z-100 ${panelClass}`}>
-        <CartContent onClose={onClose} />
+      {/*
+       * DESKTOP (≥lg)
+       * Absolute dropdown anchored to the cart button inside the header.
+       * Closed by the document mousedown listener in Header.tsx.
+       */}
+      <div className="hidden lg:flex flex-col absolute top-full right-0 mt-2 w-96 z-50 bg-white border border-ziva-border shadow-2xl max-h-[80vh] animate-slide-down">
+        <CartPanel onClose={onClose} />
       </div>
     </>
   );

@@ -188,7 +188,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en-NG" className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html lang="en-NG" data-scroll-behavior="smooth" className={`${cormorant.variable} ${dmSans.variable}`}>
       <head>
         <script
           type="application/ld+json"
