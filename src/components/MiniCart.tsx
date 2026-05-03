@@ -1,7 +1,7 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useSyncExternalStore, useEffect } from "react";
+import { useSyncExternalStore, useLayoutEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PiX, PiMinus, PiPlus, PiShoppingBag, PiTrash } from "react-icons/pi";
@@ -171,12 +171,15 @@ export default function MiniCart({ onClose }: Props) {
     () => false
   );
 
-  // Lock body scroll on mobile while cart is open; restore on unmount
-  useEffect(() => {
-    if (typeof window === "undefined" || window.innerWidth >= 1024) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+  // Scroll lock: overflow:hidden on <html> has zero side-effects (no position
+  // change, no page jump). position:fixed on body triggers a WebKit bug that
+  // resets scrollY to 0 — that was the "scrolls to top on open" issue.
+  // touch-action:none on the backdrop handles older iOS Safari where
+  // overflow:hidden alone doesn't block momentum scroll.
+  useLayoutEffect(() => {
+    const html = document.documentElement;
+    html.style.overflow = "hidden";
+    return () => { html.style.overflow = ""; };
   }, []);
 
   return (
@@ -194,7 +197,7 @@ export default function MiniCart({ onClose }: Props) {
         createPortal(
           <div className="lg:hidden">
             <div
-              className="fixed inset-0 z-200 bg-black/50 cursor-pointer"
+              className="fixed inset-0 z-200 bg-black/50 cursor-pointer touch-none"
               onClick={onClose}
               aria-hidden="true"
             />
