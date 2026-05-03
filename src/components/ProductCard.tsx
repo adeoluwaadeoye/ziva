@@ -55,8 +55,8 @@ export default function ProductCard({ product, priority }: { product: Product; p
           )}
         </div>
 
-        {/* Action icons — always visible on mobile, hover-reveal on desktop */}
-        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5 sm:gap-2 sm:translate-x-10 sm:opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
+        {/* Action icons — always visible on touch devices, hover-reveal on desktop */}
+        <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-1.5 sm:gap-2 [@media(hover:hover)]:translate-x-10 [@media(hover:hover)]:opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
           <button
             onClick={() => toggle(product.id)}
             aria-label="Wishlist"
@@ -82,12 +82,12 @@ export default function ProductCard({ product, priority }: { product: Product; p
         {product.inStock ? (
           <Link
             href={`/products/${product.id}`}
-            className="absolute bottom-0 inset-x-0 bg-ziva-black text-white text-[9px] sm:text-[10px] tracking-[0.2em] uppercase font-medium py-2.5 sm:py-3 flex items-center justify-center gap-1.5 sm:gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out hover:bg-zinc-800 hover:text-white active:bg-zinc-800 active:text-white"
+            className="absolute bottom-0 inset-x-0 bg-ziva-black text-white text-[9px] sm:text-[10px] tracking-[0.2em] uppercase font-medium py-2.5 sm:py-3 flex items-center justify-center gap-1.5 sm:gap-2 [@media(hover:hover)]:translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out hover:bg-zinc-800 hover:text-white active:bg-zinc-800 active:text-white"
           >
             Quick Add
           </Link>
         ) : (
-          <div className="absolute bottom-0 inset-x-0 bg-zinc-500 text-white text-[9px] sm:text-[10px] tracking-[0.2em] uppercase font-medium py-2.5 sm:py-3 flex items-center justify-center translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out cursor-default">
+          <div className="absolute bottom-0 inset-x-0 bg-zinc-500 text-white text-[9px] sm:text-[10px] tracking-[0.2em] uppercase font-medium py-2.5 sm:py-3 flex items-center justify-center [@media(hover:hover)]:translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out cursor-default">
             Sold Out
           </div>
         )}
