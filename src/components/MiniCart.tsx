@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { PiX, PiMinus, PiPlus, PiShoppingBag, PiTrash } from "react-icons/pi";
@@ -10,8 +9,8 @@ function fmt(n: number) { return "₦" + n.toLocaleString("en-NG"); }
 
 interface Props { onClose: () => void }
 
-export default function MiniCart({ onClose }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+// Shared panel content — rendered for both mobile and desktop layouts
+function CartContent({ onClose }: { onClose: () => void }) {
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
@@ -20,16 +19,6 @@ export default function MiniCart({ onClose }: Props) {
 
   return (
     <>
-      {/* Backdrop — mobile/tablet only, closes cart on outside tap */}
-      <div
-        className="lg:hidden fixed inset-0 bg-black/30 z-249"
-        onClick={onClose}
-      />
-
-      <div
-        ref={ref}
-        className="fixed top-18 left-3 right-3 z-250 lg:absolute lg:top-full lg:left-auto lg:right-0 lg:mt-2 lg:w-96 lg:z-100 bg-white border border-ziva-border shadow-2xl flex flex-col max-h-[80vh] animate-slide-down"
-      >
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-ziva-border shrink-0">
         <div className="flex items-center gap-2">
@@ -65,7 +54,6 @@ export default function MiniCart({ onClose }: Props) {
           <ul className="divide-y divide-ziva-border">
             {items.map((item) => (
               <li key={item.id} className="flex gap-3 px-4 py-3.5 hover:bg-ziva-cream/50 transition-colors">
-                {/* Image */}
                 <div className="relative w-16 h-20 shrink-0 overflow-hidden bg-ziva-border">
                   <Image
                     src={item.product.image}
@@ -76,7 +64,6 @@ export default function MiniCart({ onClose }: Props) {
                   />
                 </div>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <Link
                     href={`/products/${item.product.id}`}
@@ -97,7 +84,6 @@ export default function MiniCart({ onClose }: Props) {
                   )}
 
                   <div className="flex items-center justify-between mt-2">
-                    {/* Qty controls */}
                     <div className="flex items-center border border-ziva-border">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -168,7 +154,41 @@ export default function MiniCart({ onClose }: Props) {
           </div>
         </div>
       )}
-    </div>
+    </>
+  );
+}
+
+export default function MiniCart({ onClose }: Props) {
+  const panelClass = "bg-white border border-ziva-border shadow-2xl flex flex-col max-h-[80vh] animate-slide-down";
+
+  return (
+    <>
+      {/* ── Mobile / tablet (< lg) ─────────────────────────────────────────
+          Outer div covers the full screen. Tapping OUTSIDE the white panel
+          fires onClose via the outer div's onClick.
+          The white panel calls stopPropagation so any tap inside it never
+          reaches the outer div — this is the standard fix for the iOS Safari
+          bug where fixed inset-0 siblings receive click events regardless of
+          z-index stacking. */}
+      <div
+        className="lg:hidden fixed inset-0 z-250"
+        onClick={onClose}
+      >
+        {/* dim overlay — pointer-events-none so taps pass through to outer div */}
+        <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+        {/* cart panel */}
+        <div
+          className={`absolute top-18 left-3 right-3 ${panelClass}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <CartContent onClose={onClose} />
+        </div>
+      </div>
+
+      {/* ── Desktop (≥ lg): absolute dropdown ───────────────────────────── */}
+      <div className={`hidden lg:flex flex-col absolute top-full right-0 mt-2 w-96 z-100 ${panelClass}`}>
+        <CartContent onClose={onClose} />
+      </div>
     </>
   );
 }
