@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   images: {
+    qualities: [75, 90, 100],
     localPatterns: [{ pathname: "/assets/**", search: "" }],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },

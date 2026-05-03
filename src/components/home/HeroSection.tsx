@@ -102,7 +102,7 @@ export default function HeroSection() {
               alt={s.eyebrow}
               fill
               priority={i === 0}
-              quality={90}
+              quality={100}
               {...(i > 0 && { loading: "eager" as const })}
               className="object-cover hero-img-pos"
               sizes="100vw"
