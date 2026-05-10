@@ -277,4 +277,4 @@ Recommended: [Vercel](https://vercel.com) — zero-config for Next.js App Router
 
 ## Credits
 
-Designed and built by [Adeoluwa Deoye](https://adeoluwadeoye.vercel.app/) · Made in Nigeria 🇳🇬
+Designed and built by [Adeoluwa Adeoye](https://adeoluwadeoye.vercel.app/) · Made in Nigeria 🇳🇬
