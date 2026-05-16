@@ -25,8 +25,13 @@ export async function GET(
     const { id }    = await params;
     const db        = await getDb();
 
-    /* Allow either the order owner or an authenticated admin */
-    const isAdmin = req.cookies.get("admin-token")?.value === adminToken();
+    /* Allow either the order owner or an authenticated admin.
+       Mobile sends the token via x-admin-token header or adminToken query param. */
+    const expected = adminToken();
+    const isAdmin =
+      req.cookies.get("admin-token")?.value === expected ||
+      req.headers.get("x-admin-token") === expected ||
+      req.nextUrl.searchParams.get("adminToken") === expected;
     const userId  = isAdmin ? null : await getUserId(req);
 
     if (!isAdmin && !userId) {
