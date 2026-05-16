@@ -293,7 +293,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="text-[10px] text-white/40 hover:text-white/70 transition-colors duration-200 underline underline-offset-2 decoration-white/20 hover:decoration-white/50"
           >
-            Adeoluwa Deoye
+            Adeoluwa Adeoye
           </Link>
         </div>
 
