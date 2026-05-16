@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb";
-
-async function getUserId(req: NextRequest): Promise<string | null> {
-  const token = req.cookies.get("ziva-session")?.value;
-  if (!token) return null;
-  const db = await getDb();
-  const session = await db.collection("sessions").findOne({ token });
-  if (!session || new Date(session.expiresAt) < new Date()) return null;
-  return session.userId as string;
-}
+import { getSessionUserId } from "@/lib/get-session";
 
 export async function GET(req: NextRequest) {
   try {
-    const userId = await getUserId(req);
+    const userId = await getSessionUserId(req);
     if (!userId) return NextResponse.json({ ids: [] });
     const db = await getDb();
     const wishlist = await db.collection("wishlists").findOne({ userId });
@@ -25,7 +17,7 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const userId = await getUserId(req);
+    const userId = await getSessionUserId(req);
     if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     const { ids } = await req.json();
     const db = await getDb();

@@ -1,22 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb";
+import { getSessionUserId } from "@/lib/get-session";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("ziva-session")?.value;
-    if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const userId = await getSessionUserId(req);
+    if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-    const db      = await getDb();
-    const session = await db.collection("sessions").findOne({ token });
-    if (!session || new Date(session.expiresAt) < new Date()) {
-      return NextResponse.json({ error: "Session expired" }, { status: 401 });
-    }
-
-    const user = await db.collection("users").findOne({ id: session.userId });
+    const db   = await getDb();
+    const user = await db.collection("users").findOne({ id: userId });
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
     return NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt },
+      user: { id: user.id, name: user.name, email: user.email, createdAt: user.createdAt, isAdmin: user.isAdmin ?? false },
     });
   } catch (err) {
     console.error("[me]", err);
@@ -26,20 +22,15 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const token = req.cookies.get("ziva-session")?.value;
-    if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-
-    const db      = await getDb();
-    const session = await db.collection("sessions").findOne({ token });
-    if (!session || new Date(session.expiresAt) < new Date()) {
-      return NextResponse.json({ error: "Session expired" }, { status: 401 });
-    }
+    const userId = await getSessionUserId(req);
+    if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
     const { name } = await req.json();
     if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });
 
-    await db.collection("users").updateOne({ id: session.userId }, { $set: { name: name.trim() } });
-    const user = await db.collection("users").findOne({ id: session.userId });
+    const db = await getDb();
+    await db.collection("users").updateOne({ id: userId }, { $set: { name: name.trim() } });
+    const user = await db.collection("users").findOne({ id: userId });
 
     return NextResponse.json({ user: { id: user!.id, name: user!.name, email: user!.email } });
   } catch (err) {
@@ -50,7 +41,9 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const token = req.cookies.get("ziva-session")?.value;
+    const token =
+      req.cookies.get("ziva-session")?.value ??
+      req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
     if (token) {
       const db = await getDb();
       await db.collection("sessions").deleteOne({ token });

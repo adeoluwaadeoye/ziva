@@ -28,8 +28,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
     }
 
-    const res = NextResponse.json({ ok: true });
-    res.cookies.set("admin-token", makeToken(secret), COOKIE_OPTS);
+    const token = makeToken(secret);
+    const res = NextResponse.json({ ok: true, token });
+    res.cookies.set("admin-token", token, COOKIE_OPTS);
     return res;
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });

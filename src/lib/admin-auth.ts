@@ -7,5 +7,9 @@ export function adminToken(): string {
 }
 
 export function isAdmin(req: NextRequest): boolean {
-  return req.cookies.get("admin-token")?.value === adminToken();
+  const expected = adminToken();
+  return (
+    req.cookies.get("admin-token")?.value === expected ||
+    req.headers.get("x-admin-token") === expected
+  );
 }

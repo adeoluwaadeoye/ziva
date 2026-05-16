@@ -2,23 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { Resend } from "resend";
 import { getDb } from "@/lib/mongodb";
+import { getSessionUserId } from "@/lib/get-session";
 import { orderConfirmationHtml } from "@/emails/order-confirmation";
 import { newOrderAlertHtml } from "@/emails/new-order-alert";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-async function getUserId(req: NextRequest): Promise<string | null> {
-  const token = req.cookies.get("ziva-session")?.value;
-  if (!token) return null;
-  const db      = await getDb();
-  const session = await db.collection("sessions").findOne({ token });
-  if (!session || new Date(session.expiresAt) < new Date()) return null;
-  return session.userId as string;
-}
-
 export async function GET(req: NextRequest) {
   try {
-    const userId = await getUserId(req);
+    const userId = await getSessionUserId(req);
     if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     const db     = await getDb();
     const orders = await db
@@ -35,7 +27,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const userId = await getUserId(req);
+    const userId = await getSessionUserId(req);
     if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
     const body = await req.json();
