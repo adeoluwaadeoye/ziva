@@ -88,7 +88,7 @@ export default function HeroSection() {
     <section className="relative bg-ziva-black overflow-hidden">
 
       {/* ══ SLIDESHOW — 100vw × 100svh, min 480px so landscape phones don't clip ══ */}
-      <div className="relative overflow-hidden" style={{ width: "100vw", height: "100svh", minHeight: "480px" }}>
+      <div className="relative w-full overflow-hidden" style={{ height: "100svh", minHeight: "480px" }}>
 
         {/* Slide images — Next.js Image for proper responsive focal-point control */}
         {slides.map((s, i) => (

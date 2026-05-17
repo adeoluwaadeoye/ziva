@@ -30,7 +30,7 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden; /* prevents layout-level horizontal overflow */
+  scrollbar-gutter: stable; /* reserve scrollbar space so layout never shifts when scrollbar appears */
 }
 
 body {
