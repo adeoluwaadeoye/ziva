@@ -20,12 +20,15 @@ export default function AccountPage() {
   // Wait for Zustand to rehydrate from localStorage before checking auth.
   // StoreHydration calls rehydrate() in a useEffect — without this guard the
   // redirect fires before rehydration completes, bouncing logged-in users to /auth.
-  const [hydrated, setHydrated] = useState(() => useAuthStore.persist.hasHydrated());
+  const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
-    if (hydrated) return;
+    if (useAuthStore.persist.hasHydrated()) {
+      setHydrated(true);
+      return;
+    }
     const unsub = useAuthStore.persist.onFinishHydration(() => setHydrated(true));
     return () => unsub();
-  }, [hydrated]);
+  }, []);
 
   const [editing, setEditing] = useState(false);
   const [nameVal, setNameVal] = useState(user?.name ?? "");
@@ -58,13 +61,15 @@ export default function AccountPage() {
   }, [hydrated, user, router]);
 
   useEffect(() => {
-    if (!user) return;
-    fetch("/api/user/orders")
+    if (!user || !token) return;
+    fetch("/api/user/orders", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((r) => r.json())
       .then((data) => setOrders(data.orders ?? []))
       .catch(() => { })
       .finally(() => setOrdersLoading(false));
-  }, [user]);
+  }, [user, token]);
 
 
   if (!hydrated || !user) return (
