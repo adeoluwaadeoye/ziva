@@ -28,7 +28,7 @@ export default function AccountPage() {
   type Order = {
     id: string; reference: string; status: string; total: number;
     subtotal: number; shipping: number; createdAt: string;
-    items: { product: { name: string; image: string }; quantity: number; selectedSize: string }[];
+    items: { name: string; image: string; quantity: number; selectedSize: string }[];
     customer: { name: string; email: string; phone: string };
     delivery: { address: string; city: string; state: string; notes: string };
   };
@@ -297,8 +297,8 @@ export default function AccountPage() {
                             >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
-                                src={item.product.image}
-                                alt={item.product.name}
+                                src={item.image}
+                                alt={item.name}
                                 className="w-full h-full object-cover"
                               />
                             </div>
