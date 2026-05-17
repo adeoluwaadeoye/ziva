@@ -27,16 +27,19 @@ export default function ProductDetail({ product, related }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [customOpen, setCustomOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [added, setAdded] = useState(false);
   const [sizeError, setSizeError] = useState(false);
   const [measurements, setMeasurements] = useState<Measurements>({
     chest: "", waist: "", hips: "", height: "", sleeve: "", notes: "",
   });
 
   const addItem = useCartStore((s) => s.addItem);
+  const cartItems = useCartStore((s) => s.items);
   const toggle = useWishlistStore((s) => s.toggle);
   const wished = useWishlistStore((s) => s.has(product.id));
   const show = useNotificationStore((s) => s.show);
+
+  const isInCart = !!selectedSize && !!selectedColor &&
+    cartItems.some((i) => i.product?.id === product.id && i.selectedSize === selectedSize && i.selectedColor === selectedColor);
 
   useEffect(() => { trackProductView(product.id); }, [product.id]);
   const discount = product.originalPrice
@@ -51,6 +54,7 @@ export default function ProductDetail({ product, related }: Props) {
       show("Please select a size before adding to cart", "error");
       return;
     }
+    if (isInCart) return;
     setSizeError(false);
     const m = customOpen &&
       Object.values(measurements).some((v) => v.trim()) ? measurements : undefined;
@@ -58,8 +62,6 @@ export default function ProductDetail({ product, related }: Props) {
       addItem(product, selectedSize, selectedColor, selectedFabric || undefined, m);
     }
     if (m) show("Added with custom measurements · 10 business days", "info");
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2500);
   }
 
   function measureChange(field: keyof Measurements, val: string) {
@@ -327,13 +329,14 @@ export default function ProductDetail({ product, related }: Props) {
             {product.inStock ? (
               <button
                 onClick={handleAddToCart}
-                className={`flex-1 flex items-center justify-center gap-2.5 py-4 text-sm font-semibold tracking-widest uppercase transition-all duration-200 ${added
-                    ? "bg-green-600 text-white"
+                disabled={isInCart}
+                className={`flex-1 flex items-center justify-center gap-2.5 py-4 text-sm font-semibold tracking-widest uppercase transition-all duration-200 ${isInCart
+                    ? "bg-ziva-muted text-ziva-cream cursor-not-allowed"
                     : "bg-ziva-black text-ziva-cream hover:bg-ziva-black"
                   }`}
               >
-                {added ? (
-                  <><PiCheck size={16} /> Added to Cart</>
+                {isInCart ? (
+                  <><PiCheck size={16} /> In Cart</>
                 ) : (
                   <>Add to Cart — {fmt(product.price * quantity)}</>
                 )}
