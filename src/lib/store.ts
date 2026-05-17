@@ -89,7 +89,9 @@ export const useCartStore = create<CartStore>()(
           const valid = (data.items ?? []).filter(
             (i: CartItem) => i.product != null && typeof i.product.price === "number",
           );
-          set({ items: valid });
+          // Only overwrite local cart if the server has saved items — avoids
+          // wiping a guest/pre-login cart on first Google sign-in.
+          if (valid.length > 0) set({ items: valid });
         } catch { }
       },
     }),

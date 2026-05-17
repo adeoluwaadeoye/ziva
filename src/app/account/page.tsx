@@ -54,6 +54,7 @@ export default function AccountPage() {
   };
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState(false);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -65,9 +66,12 @@ export default function AccountPage() {
     fetch("/api/user/orders", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
-      .then((data) => setOrders(data.orders ?? []))
-      .catch(() => { })
+      .then((r) => {
+        if (r.status === 401) { setOrdersError(true); return null; }
+        return r.json();
+      })
+      .then((data) => { if (data) setOrders(data.orders ?? []); })
+      .catch(() => setOrdersError(true))
       .finally(() => setOrdersLoading(false));
   }, [user, token]);
 
@@ -272,6 +276,16 @@ export default function AccountPage() {
             {ordersLoading ? (
               <div className="flex items-center justify-center py-10">
                 <PiSpinner size={22} className="animate-spin-slow text-ziva-muted" />
+              </div>
+            ) : ordersError ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+                <p className="text-sm font-medium text-ziva-black">Session expired</p>
+                <p className="text-xs text-ziva-muted max-w-xs">
+                  Your session has expired. Please sign out and sign back in to view your orders.
+                </p>
+                <button onClick={handleLogout} className="text-xs text-ziva-black underline underline-offset-2 hover:no-underline">
+                  Sign out &amp; sign back in
+                </button>
               </div>
             ) : orders.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 text-center">

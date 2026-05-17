@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
     }
 
     const token = crypto.randomBytes(32).toString("hex");
-    await db.collection("sessions").deleteMany({ userId: user.id });
     await db.collection("sessions").insertOne({
       token,
       userId:    user.id,

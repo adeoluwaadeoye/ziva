@@ -92,7 +92,6 @@ export async function GET(req: NextRequest) {
     }
 
     const token = crypto.randomBytes(32).toString("hex");
-    await db.collection("sessions").deleteMany({ userId });
     await db.collection("sessions").insertOne({
       token,
       userId,
@@ -110,8 +109,8 @@ export async function GET(req: NextRequest) {
       return res;
     }
 
-    // Web: set httpOnly session cookie and redirect to sync page
-    const res = NextResponse.redirect(`${BASE}/auth/sync`);
+    // Web: set httpOnly session cookie and redirect to sync page with token for Zustand
+    const res = NextResponse.redirect(`${BASE}/auth/sync?t=${token}`);
     res.cookies.set("ziva-session", token, {
       httpOnly: true,
       sameSite: "lax",
