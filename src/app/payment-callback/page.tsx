@@ -1,23 +1,43 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+
+const RING_R = 38;
+const CIRCUMFERENCE = 2 * Math.PI * RING_R;
+const COUNTDOWN_FROM = 4;
 
 function PaymentCallbackContent() {
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference") ?? searchParams.get("trxref") ?? "";
+  const verified = !!searchParams.get("verified");
+
+  const [countdown, setCountdown] = useState(COUNTDOWN_FROM);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (!reference) return;
-    // Attempt to redirect back to the ZIVA mobile app via deep link.
-    // openAuthSessionAsync already intercepts this URL before it renders,
-    // so this fallback is for users who arrive here via a regular browser.
-    const deepLink = `ziva://payment-callback?reference=${encodeURIComponent(reference)}&trxref=${encodeURIComponent(reference)}`;
-    const timer = setTimeout(() => {
-      window.location.href = deepLink;
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [reference]);
+    // On mobile, openAuthSessionAsync intercepts ?verified=1 before this renders.
+    // This effect only runs for the first stage (no verified param) to drive the countdown.
+    if (verified) return;
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setDone(true);
+          const params = new URLSearchParams({ verified: "1" });
+          if (reference) { params.set("reference", reference); params.set("trxref", reference); }
+          window.location.href = `/payment-callback?${params.toString()}`;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [verified, reference]);
+
+  const strokeOffset = CIRCUMFERENCE * (1 - (COUNTDOWN_FROM - countdown) / COUNTDOWN_FROM);
 
   return (
     <div style={{
@@ -31,19 +51,21 @@ function PaymentCallbackContent() {
       padding: "24px",
       textAlign: "center",
     }}>
+      {/* Logo */}
       <div style={{
         backgroundColor: "#1C1C1C",
-        padding: "28px 40px",
-        marginBottom: "40px",
+        padding: "20px 36px",
+        marginBottom: "52px",
       }}>
-        <h1 style={{ color: "#B5883A", fontSize: "28px", letterSpacing: "8px", margin: 0, fontWeight: 300 }}>
+        <h1 style={{ color: "#B5883A", fontSize: "24px", letterSpacing: "8px", margin: 0, fontWeight: 300 }}>
           ZIVA
         </h1>
-        <p style={{ color: "#B5883A", fontSize: "9px", letterSpacing: "4px", margin: "4px 0 0" }}>
+        <p style={{ color: "#B5883A", fontSize: "8px", letterSpacing: "4px", margin: "3px 0 0" }}>
           / NIGERIA
         </p>
       </div>
 
+      {/* Check circle */}
       <div style={{
         width: "72px",
         height: "72px",
@@ -55,17 +77,55 @@ function PaymentCallbackContent() {
         justifyContent: "center",
         marginBottom: "24px",
         fontSize: "32px",
+        color: "#22c55e",
       }}>
         ✓
       </div>
 
-      <h2 style={{ fontSize: "22px", fontWeight: 500, color: "#1C1C1C", marginBottom: "12px" }}>
+      <h2 style={{ fontSize: "22px", fontWeight: 500, color: "#1C1C1C", margin: "0 0 8px" }}>
         Payment Successful
       </h2>
-      <p style={{ fontSize: "14px", color: "#6B6B6B", lineHeight: "1.7", maxWidth: "320px", marginBottom: "32px" }}>
-        Returning you to the ZIVA app…
+      <p style={{ fontSize: "13px", color: "#6B6B6B", margin: "0 0 44px", lineHeight: "1.7", maxWidth: "300px" }}>
+        {verified || done
+          ? "Opening the ZIVA app…"
+          : "Your order is confirmed. Returning you to the app in just a moment."}
       </p>
 
+      {/* Countdown ring */}
+      {!verified && !done && (
+        <div style={{ position: "relative", width: "100px", height: "100px", marginBottom: "40px" }}>
+          <svg width="100" height="100" style={{ transform: "rotate(-90deg)" }}>
+            <circle cx="50" cy="50" r={RING_R} fill="none" stroke="#E5E5E5" strokeWidth="5" />
+            <circle
+              cx="50" cy="50" r={RING_R}
+              fill="none"
+              stroke="#1C1C1C"
+              strokeWidth="5"
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={strokeOffset}
+              strokeLinecap="round"
+              style={{ transition: "stroke-dashoffset 0.95s linear" }}
+            />
+          </svg>
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+            <span style={{ fontSize: "30px", fontWeight: 600, color: "#1C1C1C", lineHeight: 1 }}>
+              {countdown}
+            </span>
+            <span style={{ fontSize: "9px", color: "#9CA3AF", letterSpacing: "1.5px", marginTop: "2px" }}>
+              SEC
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Manual fallback button */}
       {reference && (
         <a
           href={`ziva://payment-callback?reference=${encodeURIComponent(reference)}&trxref=${encodeURIComponent(reference)}`}
@@ -73,9 +133,9 @@ function PaymentCallbackContent() {
             display: "inline-block",
             backgroundColor: "#1C1C1C",
             color: "#FAFAF8",
-            padding: "14px 32px",
-            fontSize: "12px",
-            letterSpacing: "2px",
+            padding: "14px 36px",
+            fontSize: "11px",
+            letterSpacing: "2.5px",
             fontWeight: 600,
             textDecoration: "none",
             fontFamily: "Georgia, serif",
@@ -84,6 +144,10 @@ function PaymentCallbackContent() {
           OPEN ZIVA APP
         </a>
       )}
+
+      <p style={{ fontSize: "11px", color: "#9CA3AF", marginTop: "20px" }}>
+        🔒 Secured by Paystack
+      </p>
     </div>
   );
 }
