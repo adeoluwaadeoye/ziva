@@ -76,20 +76,34 @@ export const useCartStore = create<CartStore>()(
         serverSyncCart([]);
       },
 
-      totalItems: () => get().items.reduce((a, i) => a + i.quantity, 0),
-      totalPrice: () => get().items.reduce((a, i) => a + i.product.price * i.quantity, 0),
-      isInCart: (productId) => get().items.some((i) => i.product.id === productId),
+      totalItems: () => get().items.reduce((a, i) => a + (i.product ? i.quantity : 0), 0),
+      totalPrice: () => get().items.reduce((a, i) => a + (i.product ? i.product.price * i.quantity : 0), 0),
+      isInCart: (productId) => get().items.some((i) => i.product && i.product.id === productId),
 
       async loadFromServer() {
         try {
           const res = await fetch("/api/user/cart");
           if (!res.ok) return;
           const data = await res.json();
-          set({ items: data.items ?? [] });
+          // Filter out flat mobile-format items (no nested product object)
+          const valid = (data.items ?? []).filter(
+            (i: CartItem) => i.product != null && typeof i.product.price === "number",
+          );
+          set({ items: valid });
         } catch { }
       },
     }),
-    { name: "ziva-cart", skipHydration: true },
+    {
+      name: "ziva-cart",
+      skipHydration: true,
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.items = state.items.filter(
+            (i) => i.product != null && typeof i.product.price === "number",
+          );
+        }
+      },
+    },
   ),
 );
 
