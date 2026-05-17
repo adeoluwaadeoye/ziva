@@ -1,63 +1,59 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
 import { getDb } from "@/lib/mongodb";
+import { getSessionUserId } from "@/lib/get-session";
 import { generateInvoicePdf } from "@/lib/invoice";
-
-function adminToken() {
-  const secret = process.env.ADMIN_SECRET ?? "";
-  return crypto.createHash("sha256").update(secret + "ziva-admin").digest("hex");
-}
-
-async function getUserId(req: NextRequest): Promise<string | null> {
-  const token = req.cookies.get("ziva-session")?.value;
-  if (!token) return null;
-  const db      = await getDb();
-  const session = await db.collection("sessions").findOne({ token });
-  if (!session || new Date(session.expiresAt) < new Date()) return null;
-  return session.userId as string;
-}
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id }    = await params;
-    const db        = await getDb();
+    const userId = await getSessionUserId(req);
+    if (!userId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-    /* Allow either the order owner or an authenticated admin.
-       Mobile sends the token via x-admin-token header or adminToken query param. */
-    const expected = adminToken();
-    const isAdmin =
-      req.cookies.get("admin-token")?.value === expected ||
-      req.headers.get("x-admin-token") === expected ||
-      req.nextUrl.searchParams.get("adminToken") === expected;
-    const userId  = isAdmin ? null : await getUserId(req);
+    const { id } = await params;
+    const db = await getDb();
+    const order = await db.collection("orders").findOne({ id, userId });
+    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
 
-    if (!isAdmin && !userId) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-
-    const query = isAdmin ? { id } : { id, userId };
-    const order = await db.collection("orders").findOne(query);
-
-    if (!order) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    }
+    // Normalize items: handle both mobile (flat) and web (nested CartItem) formats
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const items = (order.items ?? []).map((item: any) => ({
+      product: {
+        name: item.name ?? item.product?.name ?? "Item",
+        price: Number(item.price ?? item.product?.price ?? 0),
+      },
+      quantity: Number(item.quantity ?? 1),
+      selectedSize: item.selectedSize ?? item.size ?? "",
+      selectedColor: item.selectedColor ?? item.color ?? "",
+      selectedFabric: item.selectedFabric ?? item.product?.selectedFabric,
+      isCustomTailored: item.isCustomTailored ?? false,
+      measurements: item.measurements,
+    }));
 
     const pdfBuffer = await generateInvoicePdf({
       orderId:   order.id,
-      reference: order.reference,
-      customer:  order.customer,
-      delivery:  order.delivery,
-      items:     order.items,
-      subtotal:  order.subtotal,
-      shipping:  order.shipping,
-      total:     order.total,
+      reference: order.reference ?? "",
+      customer:  {
+        name:  order.customer?.name  ?? "Customer",
+        email: order.customer?.email ?? "",
+        phone: order.customer?.phone ?? "",
+      },
+      delivery: {
+        address: order.delivery?.address ?? "",
+        city:    order.delivery?.city    ?? "",
+        state:   order.delivery?.state   ?? "",
+        notes:   order.delivery?.notes   ?? "",
+        type:    order.delivery?.type    ?? "standard",
+      },
+      items,
+      subtotal: Number(order.subtotal ?? 0),
+      shipping: Number(order.shipping ?? 0),
+      total:    Number(order.total    ?? 0),
     });
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
-      status:  200,
+      status: 200,
       headers: {
         "Content-Type":        "application/pdf",
         "Content-Disposition": `attachment; filename="ZIVA-Invoice-${id}.pdf"`,

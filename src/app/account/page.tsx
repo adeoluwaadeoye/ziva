@@ -17,6 +17,16 @@ export default function AccountPage() {
   const wishlistCount = useWishlistStore((s) => s.ids.length);
   const show = useNotificationStore((s) => s.show);
 
+  // Wait for Zustand to rehydrate from localStorage before checking auth.
+  // StoreHydration calls rehydrate() in a useEffect — without this guard the
+  // redirect fires before rehydration completes, bouncing logged-in users to /auth.
+  const [hydrated, setHydrated] = useState(() => useAuthStore.persist.hasHydrated());
+  useEffect(() => {
+    if (hydrated) return;
+    const unsub = useAuthStore.persist.onFinishHydration(() => setHydrated(true));
+    return () => unsub();
+  }, [hydrated]);
+
   const [editing, setEditing] = useState(false);
   const [nameVal, setNameVal] = useState(user?.name ?? "");
   const [saving, setSaving] = useState(false);
@@ -43,8 +53,9 @@ export default function AccountPage() {
   const [ordersLoading, setOrdersLoading] = useState(true);
 
   useEffect(() => {
+    if (!hydrated) return;
     if (!user) router.replace("/auth");
-  }, [user, router]);
+  }, [hydrated, user, router]);
 
   useEffect(() => {
     if (!user) return;
@@ -56,7 +67,11 @@ export default function AccountPage() {
   }, [user]);
 
 
-  if (!user) return null;
+  if (!hydrated || !user) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <PiSpinner size={28} className="animate-spin-slow text-ziva-muted" />
+    </div>
+  );
 
   async function handleSaveName() {
     if (!nameVal.trim()) return;
