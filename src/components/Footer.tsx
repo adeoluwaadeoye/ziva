@@ -96,7 +96,7 @@ function NewsletterForm() {
 
   if (status === "success") {
     return (
-      <div className="flex items-center gap-3 bg-white/6 border border-white/15 px-4 py-3.5 max-w-sm w-full">
+      <div className="flex items-center gap-3 bg-white/6 border border-white/15 px-4 py-3.5 w-full">
         <div className="w-5 h-5 rounded-full bg-white/15 flex items-center justify-center shrink-0">
           <PiCheck size={11} className="text-white" />
         </div>
@@ -106,7 +106,7 @@ function NewsletterForm() {
   }
 
   return (
-    <div className="w-full max-w-sm">
+    <div className="w-full">
       <form onSubmit={handleSubmit} className="flex">
         <input
           type="email"
@@ -140,9 +140,9 @@ export default function Footer() {
       {/* ── Newsletter band ── */}
       <div className="border-b border-white/[0.07]">
         <div className="footer-nl-band container-ziva py-8 sm:py-12 lg:py-16">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 sm:gap-10 lg:gap-16">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-16">
 
-            <div className="max-w-md shrink-0">
+            <div className="max-w-md lg:shrink-0">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-6 h-px bg-[#c9a96e]" />
                 <span className="text-[9px] tracking-[0.3em] uppercase text-[#c9a96e] font-semibold">
@@ -157,7 +157,7 @@ export default function Footer() {
               </p>
             </div>
 
-            <div className="w-full sm:max-w-sm">
+            <div className="w-full md:max-w-md lg:max-w-sm">
               <NewsletterForm />
             </div>
           </div>
@@ -166,10 +166,10 @@ export default function Footer() {
 
       {/* ── Main grid ── */}
       <div className="footer-main-grid container-ziva py-10 sm:py-12 lg:py-20">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-[1.6fr_1fr_1fr_1fr] gap-x-6 gap-y-10 sm:gap-8 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr] gap-x-6 gap-y-10 sm:gap-8 lg:gap-8">
 
-          {/* Brand column — full width on mobile, 1 col on md+ */}
-          <div className="col-span-2 md:col-span-1">
+          {/* Brand column — full width on mobile & tablet, 1 col on desktop */}
+          <div className="col-span-2 md:col-span-3 lg:col-auto">
             <Logo size="md" variant="light" href="/" className="mb-5" />
 
             <p className="text-sm text-white/45 leading-relaxed mb-7 max-w-65">
@@ -230,7 +230,7 @@ export default function Footer() {
           </div>
 
           {/* Company */}
-          <div className="col-span-2 sm:col-span-1 md:col-span-1">
+          <div className="col-span-2 md:col-span-1">
             <p className="text-[10px] font-bold tracking-[0.28em] uppercase text-white/50 mb-5">
               Company
             </p>

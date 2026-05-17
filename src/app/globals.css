@@ -30,7 +30,9 @@
 
 html {
   scroll-behavior: smooth;
-  scrollbar-gutter: stable; /* reserve scrollbar space so layout never shifts when scrollbar appears */
+}
+@media (min-width: 1024px) {
+  html { scrollbar-gutter: stable; }
 }
 
 body {
