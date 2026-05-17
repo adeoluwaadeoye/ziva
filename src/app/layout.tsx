@@ -29,7 +29,7 @@ const siteUrl         = "https://zivaclothings.vercel.app";
 const siteName        = "ZIVA";
 const siteTitle       = "ZIVA | Premium Nigerian Fashion";
 const siteDescription = "Shop premium Nigerian attire — Ankara, Aso-Oke, Agbada, Kaftan, Adire and more. Designed in Lagos, crafted by master artisans, delivered worldwide.";
-const cardImage       = "https://res.cloudinary.com/dzplca4gb/image/upload/v1777758011/card_sgg96p.jpg";
+const cardImage       = "https://res.cloudinary.com/dzplca4gb/image/upload/v1779016832/beb6af94ba566c5b702963aa1cc31a02_pgpeek.jpg";
 const iconImage       = "/assets/icon.jpg"; // public/assets/icon.jpg
 
 // ── VIEWPORT ──────────────────────────────────────────────────────────────────
