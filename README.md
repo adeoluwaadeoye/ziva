@@ -4,6 +4,17 @@ ZIVA is a full-stack e-commerce platform for premium Nigerian fashion, built wit
 
 ---
 
+## Screenshots
+
+<div align="center">
+  <img src="./public/screenshots/home.jpg" width="23%" />
+  <img src="./public/screenshots/products.jpg" width="23%" />
+  <img src="./public/screenshots/product-detail.jpg" width="23%" />
+  <img src="./public/screenshots/checkout.jpg" width="23%" />
+</div>
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
