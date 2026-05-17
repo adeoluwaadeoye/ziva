@@ -305,12 +305,14 @@ export default function AccountPage() {
                               key={idx}
                               className="relative w-9 h-10 border-2 border-white overflow-hidden bg-ziva-border shrink-0"
                             >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={img}
-                                alt={label}
-                                className="w-full h-full object-cover"
-                              />
+                              {img && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={img}
+                                  alt={label}
+                                  className="w-full h-full object-cover"
+                                />
+                              )}
                             </div>
                             );
                           })}
