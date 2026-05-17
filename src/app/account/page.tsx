@@ -25,10 +25,17 @@ export default function AccountPage() {
   const [saveErr, setSaveErr] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
 
+  type OrderItem = {
+    // flat format (mobile): name/image at top level
+    name?: string; image?: string;
+    // nested format (web): name/image inside product
+    product?: { name: string; image: string };
+    quantity: number; selectedSize: string;
+  };
   type Order = {
     id: string; reference: string; status: string; total: number;
     subtotal: number; shipping: number; createdAt: string;
-    items: { name: string; image: string; quantity: number; selectedSize: string }[];
+    items: OrderItem[];
     customer: { name: string; email: string; phone: string };
     delivery: { address: string; city: string; state: string; notes: string };
   };
@@ -290,19 +297,23 @@ export default function AccountPage() {
                       {/* Items preview */}
                       <div className="flex items-center gap-2">
                         <div className="flex -space-x-2">
-                          {order.items.slice(0, 4).map((item, idx) => (
+                          {order.items.slice(0, 4).map((item, idx) => {
+                            const img = item.image ?? item.product?.image ?? '';
+                            const label = item.name ?? item.product?.name ?? '';
+                            return (
                             <div
                               key={idx}
                               className="relative w-9 h-10 border-2 border-white overflow-hidden bg-ziva-border shrink-0"
                             >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
-                                src={item.image}
-                                alt={item.name}
+                                src={img}
+                                alt={label}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                          ))}
+                            );
+                          })}
                         </div>
                         <p className="text-xs text-ziva-muted">
                           {itemCount} {itemCount === 1 ? "item" : "items"}
