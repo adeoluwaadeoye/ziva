@@ -11,12 +11,25 @@ export async function GET(req: NextRequest) {
     const state = searchParams.get("state");
     const error = searchParams.get("error");
 
-    if (error || !code) {
+    if (error || !code || !state) {
       return NextResponse.redirect(`${BASE}/auth?error=google_cancelled`);
     }
 
-    const savedState = req.cookies.get("google-oauth-state")?.value;
-    if (!savedState || savedState !== state) {
+    // Decode the state payload { nonce, mobile }
+    let nonce: string;
+    let mobile = false;
+    try {
+      const decoded = JSON.parse(Buffer.from(state, "base64url").toString());
+      nonce  = decoded.nonce;
+      mobile = decoded.mobile === true;
+    } catch {
+      // Legacy plain-hex state (backward compat)
+      nonce = state;
+    }
+
+    const savedNonce = req.cookies.get("google-oauth-nonce")?.value
+                    ?? req.cookies.get("google-oauth-state")?.value;
+    if (!savedNonce || savedNonce !== nonce) {
       return NextResponse.redirect(`${BASE}/auth?error=invalid_state`);
     }
 
@@ -53,12 +66,14 @@ export async function GET(req: NextRequest) {
 
     const existingUser = await db.collection("users").findOne({ email: norm });
     let userId: string;
+    let userName: string;
 
     if (!existingUser) {
-      userId = crypto.randomBytes(16).toString("hex");
+      userId   = crypto.randomBytes(16).toString("hex");
+      userName = googleUser.name ?? googleUser.email.split("@")[0];
       await db.collection("users").insertOne({
         id:        userId,
-        name:      googleUser.name ?? googleUser.email.split("@")[0],
+        name:      userName,
         email:     norm,
         googleId:  googleUser.id,
         picture:   googleUser.picture ?? null,
@@ -66,7 +81,8 @@ export async function GET(req: NextRequest) {
         createdAt: new Date().toISOString(),
       });
     } else {
-      userId = existingUser.id as string;
+      userId   = existingUser.id as string;
+      userName = existingUser.name as string;
       if (!existingUser.googleId) {
         await db.collection("users").updateOne(
           { email: norm },
@@ -84,6 +100,17 @@ export async function GET(req: NextRequest) {
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     });
 
+    if (mobile) {
+      // For mobile: redirect to the app deep link with the token in the URL.
+      // openAuthSessionAsync intercepts this and returns it to the app.
+      const deepLink = `ziva://auth-callback?token=${encodeURIComponent(token)}&id=${encodeURIComponent(userId)}&name=${encodeURIComponent(userName)}&email=${encodeURIComponent(norm)}`;
+      const res = NextResponse.redirect(deepLink);
+      res.cookies.delete("google-oauth-nonce");
+      res.cookies.delete("google-oauth-state");
+      return res;
+    }
+
+    // Web: set httpOnly session cookie and redirect to sync page
     const res = NextResponse.redirect(`${BASE}/auth/sync`);
     res.cookies.set("ziva-session", token, {
       httpOnly: true,
@@ -92,6 +119,7 @@ export async function GET(req: NextRequest) {
       maxAge:   30 * 24 * 60 * 60,
       path:     "/",
     });
+    res.cookies.delete("google-oauth-nonce");
     res.cookies.delete("google-oauth-state");
     return res;
   } catch (err) {

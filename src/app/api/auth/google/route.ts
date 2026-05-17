@@ -1,14 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
-// Requires in .env.local:
-//   GOOGLE_CLIENT_ID=...
-//   GOOGLE_CLIENT_SECRET=...
-// Authorized redirect URI in Google Cloud Console:
-//   http://localhost:3000/api/auth/google/callback  (development)
-//   https://yourdomain.com/api/auth/google/callback (production)
-
-export async function GET() {
+export async function GET(req: NextRequest) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) {
     return NextResponse.redirect(
@@ -16,15 +9,19 @@ export async function GET() {
     );
   }
 
-  const state       = crypto.randomBytes(16).toString("hex");
-  const redirectUri = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google/callback`;
+  const mobile = req.nextUrl.searchParams.get("mobile") === "true";
+  const nonce  = crypto.randomBytes(16).toString("hex");
+
+  // Encode { nonce, mobile } so the callback can detect mobile requests
+  const statePayload = Buffer.from(JSON.stringify({ nonce, mobile })).toString("base64url");
+  const redirectUri  = `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google/callback`;
 
   const params = new URLSearchParams({
     client_id:     clientId,
     redirect_uri:  redirectUri,
     response_type: "code",
     scope:         "openid email profile",
-    state,
+    state:         statePayload,
     access_type:   "online",
     prompt:        "select_account",
   });
@@ -32,7 +29,8 @@ export async function GET() {
   const res = NextResponse.redirect(
     `https://accounts.google.com/o/oauth2/v2/auth?${params}`,
   );
-  res.cookies.set("google-oauth-state", state, {
+  // Store only the nonce in the CSRF cookie
+  res.cookies.set("google-oauth-nonce", nonce, {
     httpOnly: true,
     sameSite: "lax",
     secure:   process.env.NODE_ENV === "production",
